@@ -55,7 +55,7 @@ For support, questions, or help, visit [/r/uBlockOrigin][Reddit].
 
 ## Installation
 1. Clone and `make`
-2. Load unpacked in the extensions UI
+2. Load unpacked `dist/build/uBlock0.chromium` in the extensions UI
 3. Add the commandline flag `--allowlisted-extension-id=<sideloaded_uBO_id>`.
 4. Enable "Allow User Scripts" in the extension settings
 5. Restart Chrome

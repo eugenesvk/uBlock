@@ -55,6 +55,8 @@ import { staticFilteringReverseLookup } from './reverselookup.js';
 import staticNetFilteringEngine from './static-net-filtering.js';
 import webRequest from './traffic.js';
 import µb from './background.js';
+import * as benchmarksModule from "./benchmarks.js";
+import * as staticDnrFilteringModule from "./static-dnr-filtering.js";
 
 /******************************************************************************/
 
@@ -1382,7 +1384,7 @@ const getSupportData = async function() {
     }
 
     return {
-        [`${vAPI.app.name}`]: `${vAPI.app.version}`,
+        [`${vAPI.app.name}`]: `${vAPI.app.version} (MV3 PORT)`,
         [`${browserFamily}`]: `${vAPI.webextFlavor.major}`,
         'filterset (summary)': {
             network: staticNetFilteringEngine.getFilterCount(),
@@ -1853,27 +1855,27 @@ const onMessage = function(request, sender, callback) {
         return;
 
     case 'snfeBenchmark':
-        import('/js/benchmarks.js').then(module => {
+        (module => {
             module.benchmarkStaticNetFiltering({ redirectEngine }).then(result => {
                 callback(result);
             });
-        });
+        })(benchmarksModule);
         return;
 
     case 'cfeBenchmark':
-        import('/js/benchmarks.js').then(module => {
+        (module => {
             module.benchmarkCosmeticFiltering().then(result => {
                 callback(result);
             });
-        });
+        })(benchmarksModule);
         return;
 
     case 'sfeBenchmark':
-        import('/js/benchmarks.js').then(module => {
+        (module => {
             module.benchmarkScriptletFiltering().then(result => {
                 callback(result);
             });
-        });
+        })(benchmarksModule);
         return;
 
     case 'snfeToDNR': {
@@ -1899,7 +1901,7 @@ const onMessage = function(request, sender, callback) {
             ),
             env: vAPI.webextFlavor.env,
         };
-        import('./static-dnr-filtering.js').then(module => {
+        (new Promise(r=>r(staticDnrFilteringModule))).then(module => {
             const t0 = Date.now();
             module.dnrRulesetFromRawLists(listPromises, options).then(dnrdata => {
                 dnrdata.listNames = listNames;

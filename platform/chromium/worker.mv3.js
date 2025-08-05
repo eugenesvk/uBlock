@@ -1,15 +1,37 @@
-let ready = new Promise(r => {
-	self.onmessage = e => {
-		console.log("OFFSCREEN CONNECTED");
-		r(e.data.port);
+let handler = () => {};
+self.onmessage = e => handler(e);
+
+async function createOffscreen() {
+	const offscreenUrl = chrome.runtime.getURL("/offscreen.html");
+	const existing = await chrome.runtime.getContexts({
+		contextTypes: ["OFFSCREEN_DOCUMENT"],
+		documentUrls: [offscreenUrl],
+	});
+	if (!existing.length) {
+		chrome.offscreen.createDocument({ url: offscreenUrl, reasons: ["WORKERS"], justification: "polyfilling workers" });
+		console.log("OFFSCREEN CREATED");
+	} else {
+		console.log("OFFSCREEN ALIVE");
 	}
-});
+	return new Promise(r => {
+		handler = e => {
+			if (e.data.type === "init") {
+				console.log("OFFSCREEN CONTACTED");
+				e.source.postMessage({ type: "ready" });
+				setInterval(() => e.source.postMessage({ type: "ping" }), 1000);
+			} else if (e.data.type === "port") {
+				console.log("OFFSCREEN CONNECTED");
+				r(e.data.port);
+			}
+		}
+	})
+}
 
-chrome.offscreen.createDocument({ url: "/offscreen.html", reasons: ["WORKERS"], justification: "polyfilling workers" });
-
-export let genuid = () => {
+let genuid = () => {
 	return [...Array(16)].reduce(a => a + Math.random().toString(36)[2], '')
 };
+
+let ready = createOffscreen();
 
 class Worker extends EventTarget {
 	build(port, args) {
@@ -35,9 +57,12 @@ class Worker extends EventTarget {
 	constructor(...args) {
 		super();
 
+		console.log("WORKER CONSTRUCTOR");
+
 		if (ready instanceof Promise) {
 			ready.then(port => {
 				ready = port;
+				console.log("WORKER CONSTRUCTOR READY");
 				this.build(port, args);
 			});
 		} else {

@@ -126,4 +126,5 @@
 	  "matches": ["http://*/*", "https://*/*"]
     }
   ]
+  ,"key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjVAidKAvCjJiUJOLBD5A8N9uD6dR299toAj0MO0cjs7dvivSek/zKnPo5dyw1rnkeDLy3B8NsjQ2n/Hf9jCUelBJiWomCgFFF9xjdorsvRV4J/73ZWxzFiWMRGlrhxSjUeQ4wYy/D2c7eNooRk2CEFj0BIBtXFn95CqSQy4mLQKy3aIW7VMhzvwQqWfoAZ0NvuMpV4G/XxCzMrv9e7zxBJ/EbGkBYiPgrTeUuJEB+MVHzJKpNgGThPogna2u2oIrmtqxrNhi9PUaky+VQRMt5KVPqegD5fACYeMKY/inDB8w9asMARix8LZhT+avjWXnBJz3gJXK8QDwyzL68iTYkQIDAQAB"
 }
